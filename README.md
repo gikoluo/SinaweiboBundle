@@ -1,6 +1,10 @@
 Introduction
 ============
 
+
+WARNING: DO NOT fork or install now, It hasn't finished yes.
+
+
 This Bundle enables integration with Twitter PHP. Furthermore it
 also provides a Symfony2 authentication provider so that users can login to a
 Symfony2 application via Twitter. Furthermore via custom user provider support
