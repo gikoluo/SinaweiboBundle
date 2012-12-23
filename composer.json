@@ -18,15 +18,8 @@
     "require": {
         "php": ">=5.3.2",
         "symfony/framework-bundle": "2.*",
-        "symfony/security-bundle": ">=2.1,<2.3-dev",
-        "elmerzhang/weiboSDK": "*"
+        "symfony/security-bundle": ">=2.1,<2.3-dev"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "https://github.com/ElmerZhang/WeiboSDK.git"
-        }
-    ],
     "autoload": {
         "psr-0": { "Giko\\SinaweiboBundle": "" }
     },
