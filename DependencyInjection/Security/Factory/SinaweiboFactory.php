@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\DependencyInjection\Security\Factory;
+namespace Giko\SinaweiboBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 
-class TwitterFactory extends AbstractFactory
+class SinaweiboFactory extends AbstractFactory
 {
     public function __construct()
     {
-        $this->addOption('use_twitter_anywhere', false);
+        $this->addOption('use_sinaweibo_anywhere', false);
         $this->addOption('create_user_if_not_exists', false);
     }
 
@@ -31,23 +31,23 @@ class TwitterFactory extends AbstractFactory
 
     public function getKey()
     {
-        return 'fos_twitter';
+        return 'fos_sinaweibo';
     }
 
     protected function getListenerId()
     {
-        return 'fos_twitter.security.authentication.listener';
+        return 'fos_sinaweibo.security.authentication.listener';
     }
 
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        // configure auth with Twitter Anywhere
-        if (true === $config['use_twitter_anywhere']) {
+        // configure auth with sinaweibo Anywhere
+        if (true === $config['use_sinaweibo_anywhere']) {
             if (isset($config['provider'])) {
-                $authProviderId = 'fos_twitter.anywhere_auth.'.$id;
+                $authProviderId = 'fos_sinaweibo.anywhere_auth.'.$id;
 
                 $container
-                    ->setDefinition($authProviderId, new DefinitionDecorator('fos_twitter.anywhere_auth'))
+                    ->setDefinition($authProviderId, new DefinitionDecorator('fos_sinaweibo.anywhere_auth'))
                     ->addArgument(new Reference($userProviderId))
                     ->addArgument(new Reference('security.user_checker'))
                     ->addArgument($config['create_user_if_not_exists'])
@@ -57,16 +57,16 @@ class TwitterFactory extends AbstractFactory
             }
 
             // no user provider
-            return 'fos_twitter.anywhere_auth';
+            return 'fos_sinaweibo.anywhere_auth';
         }
 
-        // configure auth for standard Twitter API
+        // configure auth for standard sinaweibo API
         // with user provider
         if (isset($config['provider'])) {
-            $authProviderId = 'fos_twitter.auth.'.$id;
+            $authProviderId = 'fos_sinaweibo.auth.'.$id;
 
             $container
-                ->setDefinition($authProviderId, new DefinitionDecorator('fos_twitter.auth'))
+                ->setDefinition($authProviderId, new DefinitionDecorator('fos_sinaweibo.auth'))
                 ->addArgument(new Reference($userProviderId))
                 ->addArgument(new Reference('security.user_checker'))
                 ->addArgument($config['create_user_if_not_exists'])
@@ -76,17 +76,17 @@ class TwitterFactory extends AbstractFactory
         }
 
         // without user provider
-        return 'fos_twitter.auth';
+        return 'fos_sinaweibo.auth';
     }
 
     protected function createListener($container, $id, $config, $userProvider)
     {
         $listenerId = parent::createListener($container, $id, $config, $userProvider);
 
-        if ($config['use_twitter_anywhere']) {
+        if ($config['use_sinaweibo_anywhere']) {
             $container
                 ->getDefinition($listenerId)
-                ->addMethodCall('setUseTwitterAnywhere', array(true))
+                ->addMethodCall('setUsesinaweiboAnywhere', array(true))
             ;
         }
 
@@ -95,9 +95,9 @@ class TwitterFactory extends AbstractFactory
 
     protected function createEntryPoint($container, $id, $config, $defaultEntryPointId)
     {
-        $entryPointId = 'fos_twitter.security.authentication.entry_point.'.$id;
+        $entryPointId = 'fos_sinaweibo.security.authentication.entry_point.'.$id;
         $container
-            ->setDefinition($entryPointId, new DefinitionDecorator('fos_twitter.security.authentication.entry_point'))
+            ->setDefinition($entryPointId, new DefinitionDecorator('fos_sinaweibo.security.authentication.entry_point'))
         ;
 
         return $entryPointId;

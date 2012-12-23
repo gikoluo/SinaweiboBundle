@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\DependencyInjection;
+namespace Giko\SinaweiboBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -19,10 +19,10 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
-class FOSTwitterExtension extends Extension
+class GikoSinaweiboExtension extends Extension
 {
     protected $resources = array(
-        'twitter' => 'twitter.xml',
+        'sinaweibo' => 'sinaweibo.xml',
         'security' => 'security.xml',
     );
 
@@ -35,18 +35,18 @@ class FOSTwitterExtension extends Extension
         $this->loadDefaults($container);
 
         if (isset($config['alias'])) {
-            $container->setAlias($config['alias'], 'fos_twitter.service');
+            $container->setAlias($config['alias'], 'fos_sinaweibo.service');
         }
 
         foreach (array('file', 'consumer_key', 'consumer_secret', 'callback_url', 'access_token', 'access_token_secret', 'anywhere_version') as $attribute) {
             if (isset($config[$attribute])) {
-                $container->setParameter('fos_twitter.'.$attribute, $config[$attribute]);
+                $container->setParameter('fos_sinaweibo.'.$attribute, $config[$attribute]);
             }
         }
 
         if (!empty($config['callback_route'])) {
             $container
-                ->getDefinition('fos_twitter.service')
+                ->getDefinition('fos_sinaweibo.service')
                 ->addMethodCall('setCallbackRoute', array(
                     new Reference('router'),
                     $config['callback_route'],
@@ -68,7 +68,7 @@ class FOSTwitterExtension extends Extension
      */
     public function getNamespace()
     {
-        return 'http://friendsofsymfony.github.com/schema/dic/twitter';
+        return 'http://friendsofsymfony.github.com/schema/dic/sinaweibo';
     }
 
     /**

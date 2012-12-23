@@ -1,11 +1,15 @@
 {
-    "name": "friendsofsymfony/twitter-bundle",
+    "name": "giko/sinaweibo-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony FOSTwitterBundle",
-    "keywords": ["Twitter authentication"],
-    "homepage": "http://friendsofsymfony.github.com",
+    "description": "Giko Sina Weibo Bundle",
+    "keywords": ["Sina Weibo authentication"],
+    "homepage": "https://github.com/gikoluo/SinaWeiboBundle",
     "license": "MIT",
     "authors": [
+        {
+            "name": "LuoChunhui",
+            "homepage": "http://www.luochunhui.com/"
+        },
         {
             "name": "FriendsOfSymfony Community",
             "homepage": "https://github.com/FriendsOfSymfony/FOSTwitterBundle/contributors"
@@ -15,10 +19,16 @@
         "php": ">=5.3.2",
         "symfony/framework-bundle": "2.*",
         "symfony/security-bundle": ">=2.1,<2.3-dev",
-        "kertz/twitteroauth": "*"
+        "elmerzhang/weiboSDK": "*"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/ElmerZhang/WeiboSDK.git"
+        }
+    ],
     "autoload": {
-        "psr-0": { "FOS\\TwitterBundle": "" }
+        "psr-0": { "Giko\\SinaweiboBundle": "" }
     },
-    "target-dir": "FOS/TwitterBundle"
+    "target-dir": "Giko/SinaweiboBundle"
 }

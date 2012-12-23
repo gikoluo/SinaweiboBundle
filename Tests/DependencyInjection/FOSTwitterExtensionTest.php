@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Tests\DependencyInjection;
+namespace Giko\SinaweiboBundle\Tests\DependencyInjection;
 
-use FOS\TwitterBundle\DependencyInjection\FOSTwitterExtension;
+use Giko\SinaweiboBundle\DependencyInjection\GikoSinaweiboExtension;
 
 class TwitterExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Bundle\FOS\TwitterBundle\DependencyInjection\FOSTwitterExtension::load
+     * @covers Bundle\Giko\SinaweiboBundle\DependencyInjection\GikoSinaweiboExtension::load
      */
     public function testLoadFailed()
     {
@@ -24,12 +24,12 @@ class TwitterExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = $this->getMock('Symfony\\Component\\DependencyInjection\\ContainerBuilder');
 
-        $extension = new FOSTwitterExtension();
+        $extension = new GikoSinaweiboExtension();
         $extension->load(array(), $container);
     }
 
     /**
-     * @covers Bundle\FOS\TwitterBundle\DependencyInjection\FOSTwitterExtension::load
+     * @covers Bundle\Giko\SinaweiboBundle\DependencyInjection\GikoSinaweiboExtension::load
      */
     public function testLoadSuccess()
     {
@@ -59,7 +59,7 @@ class TwitterExtensionTest extends \PHPUnit_Framework_TestCase
 
         $configs[] = array('alias' => $alias);
 
-        $extension = new FOSTwitterExtension();
+        $extension = new GikoSinaweiboExtension();
         $extension->load($configs, $container);
     }
 }

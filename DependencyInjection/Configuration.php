@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\DependencyInjection;
+namespace Giko\SinaweiboBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder,
     Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('fos_twitter');
+        $rootNode = $treeBuilder->root('fos_sinaweibo');
 
         $rootNode
             ->validate()
@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
                 })
             ->end()
             ->children()
-                ->scalarNode('file')->defaultValue('%kernel.root_dir%/../vendor/twitteroauth/twitteroauth/twitteroauth.php')->end()
+                ->scalarNode('file')->defaultValue('%kernel.root_dir%/../vendor/sinaweibooauth/sinaweibooauth/sinaweibooauth.php')->end()
                 ->scalarNode('consumer_key')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('consumer_secret')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('access_token')->defaultNull()->end()

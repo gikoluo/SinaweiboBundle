@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\TwitterBundle\Security\User;
+namespace Giko\SinaweiboBundle\Security\User;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 

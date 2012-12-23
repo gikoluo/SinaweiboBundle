@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="fos_sinaweibo.file">null</parameter>
+        <parameter key="fos_sinaweibo.consumer_key">null</parameter>
+        <parameter key="fos_sinaweibo.consumer_secret">null</parameter>
+        <parameter key="fos_sinaweibo.access_token">null</parameter>
+        <parameter key="fos_sinaweibo.access_token_secret">null</parameter>
+        <parameter key="fos_sinaweibo.callback_url">null</parameter>
+        <parameter key="fos_sinaweibo.anywhere_version">1</parameter>
+        
+        <parameter key="fos_sinaweibo.anywhere.helper.class">Giko\SinaweiboBundle\Templating\Helper\TwitterAnywhereHelper</parameter>
+        <parameter key="fos_sinaweibo.anywhere.twig.class">Giko\SinaweiboBundle\Twig\Extension\TwitterAnywhereExtension</parameter>
+
+        <parameter key="fos_sinaweibo.api.class">TwitterOAuth</parameter>
+        <parameter key="fos_sinaweibo.service.class">Giko\SinaweiboBundle\Services\Twitter</parameter>
+    </parameters>
+
+    <services>
+        <service id="fos_sinaweibo.service" class="%fos_sinaweibo.service.class%">
+            <argument type="service" id="fos_sinaweibo.api"/>
+            <argument type="service" id="session" />
+            <argument key="callback_url">%fos_sinaweibo.callback_url%</argument>
+        </service>
+
+        <!-- This is the base API connect service, injected to the wrapper service -->
+        <service id="fos_sinaweibo.api" class="%fos_sinaweibo.api.class%">
+            <file>%fos_sinaweibo.file%</file>
+            <argument key="consumer_key">%fos_sinaweibo.consumer_key%</argument>
+            <argument key="consumer_secret">%fos_sinaweibo.consumer_secret%</argument>
+            <argument key="oauth_token">%fos_sinaweibo.access_token%</argument>
+            <argument key="oauth_token_secret">%fos_sinaweibo.access_token_secret%</argument>
+        </service>
+
+        <!-- @Anywhere Templating Helper -->
+        <service id="fos_sinaweibo.anywhere.helper" class="%fos_sinaweibo.anywhere.helper.class%">
+            <argument type="service" id="templating" />
+            <argument>%fos_sinaweibo.consumer_key%</argument>
+            <argument>%fos_sinaweibo.anywhere_version%</argument>
+            <tag name="templating.helper" alias="sinaweibo_anywhere" />
+        </service>
+
+        <service id="fos_sinaweibo.anywhere.twig" class="%fos_sinaweibo.anywhere.twig.class%">
+            <argument type="service" id="service_container" />
+            <tag name="twig.extension" />
+        </service>
+        
+    </services>
+</container>

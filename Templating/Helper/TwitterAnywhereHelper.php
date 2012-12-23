@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Templating\Helper;
+namespace Giko\SinaweiboBundle\Templating\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
 use Symfony\Component\Templating\EngineInterface;
@@ -36,7 +36,7 @@ class TwitterAnywhereHelper extends Helper
      */
     public function setup($parameters = array(), $name = null)
     {
-        $name = $name ?: 'FOSTwitterBundle::setup.html.php';
+        $name = $name ?: 'GikoSinaweiboBundle::setup.html.php';
         return $this->templating->render($name, $parameters + array(
             'apiKey'      => $this->apiKey,
             'version'     => $this->version,
@@ -54,7 +54,7 @@ class TwitterAnywhereHelper extends Helper
             $lines .= rtrim($script, ';').";\n";
         }
 
-        $name = $name ?: 'FOSTwitterBundle::initialize.html.php';
+        $name = $name ?: 'GikoSinaweiboBundle::initialize.html.php';
         return $this->templating->render($name, $parameters + array(
             'configMap'     => $this->config,
             'scripts'       => $lines,

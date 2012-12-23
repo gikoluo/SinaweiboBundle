@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Security\EntryPoint;
+namespace Giko\SinaweiboBundle\Security\EntryPoint;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +18,8 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\SecurityContext;
 
-use FOS\TwitterBundle\Security\Exception\ConnectionException;
-use FOS\TwitterBundle\Services\Twitter;
+use Giko\SinaweiboBundle\Security\Exception\ConnectionException;
+use Giko\SinaweiboBundle\Services\Twitter;
 
 /**
  * TwitterAuthenticationEntryPoint starts an authentication via Twitter.

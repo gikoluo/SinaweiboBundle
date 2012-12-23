@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Security\Authentication\Provider;
+namespace Giko\SinaweiboBundle\Security\Authentication\Provider;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterAnywhereToken;
+use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterAnywhereToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 

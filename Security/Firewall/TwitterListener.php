@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Security\Firewall;
+namespace Giko\SinaweiboBundle\Security\Firewall;
 
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterAnywhereToken;
+use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterAnywhereToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
+use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterUserToken;
 use Symfony\Component\Security\Http\Firewall\AbstractAuthenticationListener;
 use Symfony\Component\HttpFoundation\Request;
 

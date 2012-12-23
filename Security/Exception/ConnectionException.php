@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Security\Exception;
+namespace Giko\SinaweiboBundle\Security\Exception;
 
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 

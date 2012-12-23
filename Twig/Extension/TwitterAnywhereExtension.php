@@ -4,7 +4,7 @@
  * Date: 05/03/11
  */
 
-namespace FOS\TwitterBundle\Twig\Extension;
+namespace Giko\SinaweiboBundle\Twig\Extension;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
     
@@ -32,12 +32,12 @@ class TwitterAnywhereExtension extends \Twig_Extension
 
     public function renderSetup($parameters = array(), $name = null)
     {
-        return $this->container->get('fos_twitter.anywhere.helper')->setup($parameters, $name ?: 'FOSTwitterBundle::setup.html.twig');
+        return $this->container->get('fos_twitter.anywhere.helper')->setup($parameters, $name ?: 'GikoSinaweiboBundle::setup.html.twig');
     }
 
     public function renderInitialize($parameters = array(), $name = null)
     {
-        return $this->container->get('fos_twitter.anywhere.helper')->initialize($parameters, $name ?: 'FOSTwitterBundle::initialize.html.twig');
+        return $this->container->get('fos_twitter.anywhere.helper')->initialize($parameters, $name ?: 'GikoSinaweiboBundle::initialize.html.twig');
     }
 
      /*

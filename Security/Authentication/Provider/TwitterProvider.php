@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the GikoSinaweiboBundle package.
  *
  * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
  *
@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\TwitterBundle\Security\Authentication\Provider;
+namespace Giko\SinaweiboBundle\Security\Authentication\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use FOS\TwitterBundle\Security\User\UserManagerInterface;
+use Giko\SinaweiboBundle\Security\User\UserManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -23,8 +23,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
 
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
-use FOS\TwitterBundle\Services\Twitter;
+use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterUserToken;
+use Giko\SinaweiboBundle\Services\Twitter;
 
 class TwitterProvider implements AuthenticationProviderInterface
 {
