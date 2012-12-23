@@ -15,11 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterAnywhereToken;
+use Giko\SinaweiboBundle\Security\Authentication\Token\SinaweiboAnywhereToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 
-class TwitterAnywhereProvider implements AuthenticationProviderInterface
+class SinaweiboAnywhereProvider implements AuthenticationProviderInterface
 {
     private $consumerSecret;
     private $provider;
@@ -45,7 +45,7 @@ class TwitterAnywhereProvider implements AuthenticationProviderInterface
                 $this->checker->checkPostAuth($user);
             }
 
-            $authenticated = TwitterAnywhereToken::createAuthenticated($user, $user->getRoles());
+            $authenticated = SinaweiboAnywhereToken::createAuthenticated($user, $user->getRoles());
             $authenticated->setAttributes($token->getAttributes());
 
             return $authenticated;
@@ -56,7 +56,7 @@ class TwitterAnywhereProvider implements AuthenticationProviderInterface
         }
 
         if (null === $this->provider) {
-            $authenticated = TwitterAnywhereToken::createAuthenticated($token->getUser(), array());
+            $authenticated = SinaweiboAnywhereToken::createAuthenticated($token->getUser(), array());
             $authenticated->setAttributes($token->getAttributes());
 
             return $authenticated;
@@ -66,7 +66,7 @@ class TwitterAnywhereProvider implements AuthenticationProviderInterface
             $user = $this->provider->loadUserByUsername($token->getUser());
             $this->checker->checkPostAuth($user);
 
-            $authenticated = TwitterAnywhereToken::createAuthenticated($user, $user->getRoles());
+            $authenticated = SinaweiboAnywhereToken::createAuthenticated($user, $user->getRoles());
             $authenticated->setAttributes($token->getAttributes());
 
             return $authenticated;
@@ -79,7 +79,7 @@ class TwitterAnywhereProvider implements AuthenticationProviderInterface
 
     public function supports(TokenInterface $token)
     {
-        return $token instanceof TwitterAnywhereToken;
+        return $token instanceof SinaweiboAnywhereToken;
     }
 
     private function isSignatureValid($actual, $expected)

@@ -31,12 +31,12 @@ class SinaweiboFactory extends AbstractFactory
 
     public function getKey()
     {
-        return 'fos_sinaweibo';
+        return 'giko_sinaweibo';
     }
 
     protected function getListenerId()
     {
-        return 'fos_sinaweibo.security.authentication.listener';
+        return 'giko_sinaweibo.security.authentication.listener';
     }
 
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
@@ -44,10 +44,10 @@ class SinaweiboFactory extends AbstractFactory
         // configure auth with sinaweibo Anywhere
         if (true === $config['use_sinaweibo_anywhere']) {
             if (isset($config['provider'])) {
-                $authProviderId = 'fos_sinaweibo.anywhere_auth.'.$id;
+                $authProviderId = 'giko_sinaweibo.anywhere_auth.'.$id;
 
                 $container
-                    ->setDefinition($authProviderId, new DefinitionDecorator('fos_sinaweibo.anywhere_auth'))
+                    ->setDefinition($authProviderId, new DefinitionDecorator('giko_sinaweibo.anywhere_auth'))
                     ->addArgument(new Reference($userProviderId))
                     ->addArgument(new Reference('security.user_checker'))
                     ->addArgument($config['create_user_if_not_exists'])
@@ -57,16 +57,16 @@ class SinaweiboFactory extends AbstractFactory
             }
 
             // no user provider
-            return 'fos_sinaweibo.anywhere_auth';
+            return 'giko_sinaweibo.anywhere_auth';
         }
 
         // configure auth for standard sinaweibo API
         // with user provider
         if (isset($config['provider'])) {
-            $authProviderId = 'fos_sinaweibo.auth.'.$id;
+            $authProviderId = 'giko_sinaweibo.auth.'.$id;
 
             $container
-                ->setDefinition($authProviderId, new DefinitionDecorator('fos_sinaweibo.auth'))
+                ->setDefinition($authProviderId, new DefinitionDecorator('giko_sinaweibo.auth'))
                 ->addArgument(new Reference($userProviderId))
                 ->addArgument(new Reference('security.user_checker'))
                 ->addArgument($config['create_user_if_not_exists'])
@@ -76,7 +76,7 @@ class SinaweiboFactory extends AbstractFactory
         }
 
         // without user provider
-        return 'fos_sinaweibo.auth';
+        return 'giko_sinaweibo.auth';
     }
 
     protected function createListener($container, $id, $config, $userProvider)
@@ -95,9 +95,9 @@ class SinaweiboFactory extends AbstractFactory
 
     protected function createEntryPoint($container, $id, $config, $defaultEntryPointId)
     {
-        $entryPointId = 'fos_sinaweibo.security.authentication.entry_point.'.$id;
+        $entryPointId = 'giko_sinaweibo.security.authentication.entry_point.'.$id;
         $container
-            ->setDefinition($entryPointId, new DefinitionDecorator('fos_sinaweibo.security.authentication.entry_point'))
+            ->setDefinition($entryPointId, new DefinitionDecorator('giko_sinaweibo.security.authentication.entry_point'))
         ;
 
         return $entryPointId;

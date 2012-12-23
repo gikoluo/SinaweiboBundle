@@ -35,18 +35,18 @@ class GikoSinaweiboExtension extends Extension
         $this->loadDefaults($container);
 
         if (isset($config['alias'])) {
-            $container->setAlias($config['alias'], 'fos_sinaweibo.service');
+            $container->setAlias($config['alias'], 'giko_sinaweibo.service');
         }
 
         foreach (array('file', 'consumer_key', 'consumer_secret', 'callback_url', 'access_token', 'access_token_secret', 'anywhere_version') as $attribute) {
             if (isset($config[$attribute])) {
-                $container->setParameter('fos_sinaweibo.'.$attribute, $config[$attribute]);
+                $container->setParameter('giko_sinaweibo.'.$attribute, $config[$attribute]);
             }
         }
 
         if (!empty($config['callback_route'])) {
             $container
-                ->getDefinition('fos_sinaweibo.service')
+                ->getDefinition('giko_sinaweibo.service')
                 ->addMethodCall('setCallbackRoute', array(
                     new Reference('router'),
                     $config['callback_route'],

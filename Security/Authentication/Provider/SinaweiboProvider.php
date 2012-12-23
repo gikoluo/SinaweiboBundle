@@ -23,17 +23,17 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
 
-use Giko\SinaweiboBundle\Security\Authentication\Token\TwitterUserToken;
-use Giko\SinaweiboBundle\Services\Twitter;
+use Giko\SinaweiboBundle\Security\Authentication\Token\SinaweiboUserToken;
+use Giko\SinaweiboBundle\Services\Sinaweibo;
 
-class TwitterProvider implements AuthenticationProviderInterface
+class SinaweiboProvider implements AuthenticationProviderInterface
 {
-    private $twitter;
+    private $sinaweibo;
     private $userProvider;
     private $userChecker;
     private $createUserIfNotExists;
 
-    public function __construct(Twitter $twitter, UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createUserIfNotExists = false)
+    public function __construct(Sinaweibo $sinaweibo, UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createUserIfNotExists = false)
     {
         if (null !== $userProvider && null === $userChecker) {
             throw new \InvalidArgumentException('$userChecker cannot be null, if $userProvider is not null.');
@@ -43,7 +43,7 @@ class TwitterProvider implements AuthenticationProviderInterface
             throw new \InvalidArgumentException('$userProvider must be an instanceof UserManagerInterface if createUserIfNotExists is true.');
         }
 
-        $this->twitter = $twitter;
+        $this->sinaweibo = $sinaweibo;
         $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
         $this->createUserIfNotExists = $createUserIfNotExists;
@@ -57,15 +57,15 @@ class TwitterProvider implements AuthenticationProviderInterface
 
         $user = $token->getUser();
         if ($user instanceof UserInterface) {
-            // FIXME: Should we make a call to Twitter for verification?
-            $newToken = new TwitterUserToken($user, null, $user->getRoles());
+            // FIXME: Should we make a call to Sinaweibo for verification?
+            $newToken = new SinaweiboUserToken($user, null, $user->getRoles());
             $newToken->setAttributes($token->getAttributes());
 
             return $newToken;
         }
 
         try {
-            if ($accessToken = $this->twitter->getAccessToken($token->getUser(), $token->getOauthVerifier())) {
+            if ($accessToken = $this->sinaweibo->getAccessToken($token->getUser(), $token->getOauthVerifier())) {
                 $newToken = $this->createAuthenticatedToken($accessToken);
                 $newToken->setAttributes($token->getAttributes());
 
@@ -77,18 +77,18 @@ class TwitterProvider implements AuthenticationProviderInterface
             throw new AuthenticationException($failed->getMessage(), null, $failed->getCode(), $failed);
         }
 
-        throw new AuthenticationException('The Twitter user could not be retrieved from the session.');
+        throw new AuthenticationException('The Sinaweibo user could not be retrieved from the session.');
     }
 
     public function supports(TokenInterface $token)
     {
-        return $token instanceof TwitterUserToken;
+        return $token instanceof SinaweiboUserToken;
     }
 
     private function createAuthenticatedToken(array $accessToken)
     {
         if (null === $this->userProvider) {
-            return new TwitterUserToken($accessToken['screen_name'], null, array('ROLE_TWITTER_USER'));
+            return new SinaweiboUserToken($accessToken['screen_name'], null, array('ROLE_TWITTER_USER'));
         }
 
         try {
@@ -106,6 +106,6 @@ class TwitterProvider implements AuthenticationProviderInterface
             throw new \RuntimeException('User provider did not return an implementation of user interface.');
         }
 
-        return new TwitterUserToken($user, null, $user->getRoles());
+        return new SinaweiboUserToken($user, null, $user->getRoles());
     }
 }

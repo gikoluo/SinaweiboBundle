@@ -5,22 +5,22 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="fos_sinaweibo.auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\TwitterProvider" public="false">
-            <argument type="service" id="fos_sinaweibo.service"/>
+        <service id="giko_sinaweibo.auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\SinaweiboProvider" public="false">
+            <argument type="service" id="giko_sinaweibo.service"/>
         </service>
         
-        <service id="fos_sinaweibo.anywhere_auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\TwitterAnywhereProvider" public="false">
-            <argument>%fos_sinaweibo.consumer_secret%</argument>
+        <service id="giko_sinaweibo.anywhere_auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\SinaweiboAnywhereProvider" public="false">
+            <argument>%giko_sinaweibo.consumer_secret%</argument>
         </service>
 
-        <service id="fos_sinaweibo.security.authentication.listener"
-                 class="Giko\SinaweiboBundle\Security\Firewall\TwitterListener"
+        <service id="giko_sinaweibo.security.authentication.listener"
+                 class="Giko\SinaweiboBundle\Security\Firewall\SinaweiboListener"
                  parent="security.authentication.listener.abstract"
                  abstract="true">
         </service>
 
-        <service id="fos_sinaweibo.security.authentication.entry_point" class="Giko\SinaweiboBundle\Security\EntryPoint\TwitterAuthenticationEntryPoint" public="false" abstract="true">
-            <argument type="service" id="fos_sinaweibo.service"/>
+        <service id="giko_sinaweibo.security.authentication.entry_point" class="Giko\SinaweiboBundle\Security\EntryPoint\SinaweiboAuthenticationEntryPoint" public="false" abstract="true">
+            <argument type="service" id="giko_sinaweibo.service"/>
         </service>
 
     </services>
