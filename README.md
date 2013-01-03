@@ -302,14 +302,15 @@
  
 
 -----------------------
-如果，咳咳，我的代码对你有帮助，请给我买杯咖啡吧。<a href="https://me.alipay.com/giko"><img src="https://raw.github.com/gikoluo/SinaweiboBundle/master/doc/donate-with-alipay.png" alt="通过支付宝捐赠"></a>
+如果，咳咳，我的代码对你有帮助，请给我买杯咖啡吧。
+<a href="https://me.alipay.com/giko"><img src="https://raw.github.com/gikoluo/SinaweiboBundle/master/doc/donate-with-alipay.png" alt="通过支付宝捐赠"></a>
 -----------------------
 
 使用 新浪微博小组件 @JS-Widget
 -----------------------
 
 组件已包含了用户@JS-Widget的模板插件，使用前，需要在你的模板文件的顶部中进行注册：
-
+```
         <!-- inside a php template -->
           <?php echo $view['sinaweibo_anywhere']->setup() ?>
         </head>
@@ -317,8 +318,9 @@
         <!-- inside a twig template -->
           {{ sinaweibo_anywhere_setup() }}
         </head>
-
+```
 注册好了之后，在你需要放置按钮的地方，写这么一段JS代码：
+```
         <!-- inside a php template -->
         <span id="sinaweibo_connect"></span>
         <?php $view['sinaweibo_anywhere']->setConfig('callbackURL', 'http://www.example.com/login_check') ?>
@@ -328,8 +330,9 @@
         <span id="sinaweibo_connect"></span>
         {{ sinaweibo_anywhere_setConfig('callbackURL', 'http://www.example.com/login_check') }}
         {{ sinaweibo_anywhere_queue('T("#sinaweibo_connect").connectButton()') }}
-
+```
 最后，调用`->initialize()`方法来完成所有的工作：
+```
         <!-- inside a php template -->
           <?php $view['sinaweibo_anywhere']->initialize() ?>
         </body>
@@ -337,4 +340,7 @@
         <!-- inside a twig template -->
         {{ sinaweibo_anywhere_initialize() }}
         </body>
+```
+
+
 
