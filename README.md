@@ -15,7 +15,7 @@
         "repositories": [
             {
                 "type": "vcs",
-                "url":  "https://github.com/gikoluo/SinaWeiboBundle.git"
+                "url":  "https://github.com/gikoluo/SinaweiboBundle.git"
             }
         ],
         "require": {

@@ -12,7 +12,6 @@
         <parameter key="giko_sinaweibo.access_token_secret">null</parameter>
         <parameter key="giko_sinaweibo.callback_url">null</parameter>
         <parameter key="giko_sinaweibo.anywhere_version">1</parameter>
-        <parameter key="giko_sinaweibo.user.provider.class">Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider</parameter>
         
         <parameter key="giko_sinaweibo.anywhere.helper.class">Giko\SinaweiboBundle\Templating\Helper\SinaweiboAnywhereHelper</parameter>
         <parameter key="giko_sinaweibo.anywhere.twig.class">Giko\SinaweiboBundle\Twig\Extension\SinaweiboAnywhereExtension</parameter>
@@ -22,13 +21,6 @@
     </parameters>
     
     <services>
-        <service id="sinaweibo.user.provider" class="%giko_sinaweibo.user.provider.class%">
-            <argument type="service" id="giko_sinaweibo.api"/>
-            <argument type="service" id="fos_user.user_manager" />
-            <argument type="service" id="validator" />
-            <argument type="service" id="session" />
-        </service>
-        
         <service id="giko_sinaweibo.service" class="%giko_sinaweibo.service.class%">
             <argument type="service" id="giko_sinaweibo.api"/>
             <argument type="service" id="session" />
@@ -55,6 +47,13 @@
         <service id="giko_sinaweibo.anywhere.twig" class="%giko_sinaweibo.anywhere.twig.class%">
             <argument type="service" id="service_container" />
             <tag name="twig.extension" />
+        </service>
+        
+        <service id="giko_sinaweibo.user_provider.sina" class="Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider">
+            <argument type="service" id="giko_sinaweibo.api"/>
+            <argument type="service" id="fos_user.user_manager" />
+            <argument type="service" id="validator" />
+            <argument type="service" id="session" />
         </service>
         
     </services>
