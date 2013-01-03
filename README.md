@@ -10,6 +10,7 @@
 ============
 
   1. 将本组件 ```giko/sinaweibo-bundle``` 和 ```friendsofsymfony/user-bundle```  添加到 ``composer.json`` 文件:
+```
         "repositories": [
             {
                 "type": "vcs",
@@ -21,11 +22,14 @@
             "friendsofsymfony/user-bundle": "dev-master",
             "giko/sinaweibo-bundle": "dev-master",
         }
-    
-  2. 使用Git submodules的方式将 ElmerZhang / WeiboSDK 新浪微博代码添加代码库。 或者你也可以通过手动下载的方式下载并解压到对应的目录。 
-          $ git submodule add git://github.com/ElmerZhang/WeiboSDK.git vendor/sinalib
+```
 
+  2. 使用Git submodules的方式将 ElmerZhang / WeiboSDK 新浪微博代码添加代码库。 或者你也可以通过手动下载的方式下载并解压到对应的目录。 
+```
+          $ git submodule add git://github.com/ElmerZhang/WeiboSDK.git vendor/sinalib
+```
   3. 在应用内核代码中注册组件：
+```php
           //app/AppKernel.php
           public function registerBundles()
           {
@@ -36,8 +40,10 @@
                   // ...
               );
           }
+```
   4. 配置FOS User。 
-  * Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
+* Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
+```yaml
             #app/config/config.yml
             #FOS User
             fos_user:
@@ -59,110 +65,110 @@
                         type:               fos_user_profile
                         name:               fos_user_profile_form
                         validation_groups:  [Profile, Default]
-  
-使用FOSUserBundle建立你自己的用户模块，并与新浪微博集成
--------------------------------------------------------
+```
+  5. 使用FOSUserBundle建立你自己的用户模块
 
-建立用户Model，并增加几个新浪微博字段：
+  建立用户Model，并增加几个新浪微博字段：
 ``` php
-<?php
-// src/Acme/UserBundle/Entity/User.php
-
-namespace Acme\UserBundle\Entity;
-
-use FOS\UserBundle\Entity\User as BaseUser;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="fos_user")
- */
-class User extends BaseUser
-{
+    <?php
+    // src/Acme/UserBundle/Entity/User.php
+     
+    namespace Acme\UserBundle\Entity;
+    use FOS\UserBundle\Entity\User as BaseUser;
+    use Doctrine\ORM\Mapping as ORM;
+     
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Entity
+     * @ORM\Table(name="fos_user")
      */
-    protected $id;
-
-    public function __construct()
+    class User extends BaseUser
     {
-        parent::__construct();
-        // your own logic
-    }
-    /**
-     * @var string $sinaweiboId
-     * 
-     * @ORM\Column(name="sinaweibo_id", type="string", length=80, nullable=true)
-     */
-    private $sinaweiboId;
+        /**
+         * @ORM\Id
+         * @ORM\Column(type="integer")
+         * @ORM\GeneratedValue(strategy="AUTO")
+         */
+        protected $id;
     
-    /**
-     * @var string $sinaweiboUsername
-     * 
-     * @ORM\Column(name="sinaweibo_username", type="string", length=100, nullable=true)
-     */
-    private $sinaweiboUsername;
+        public function __construct()
+        {
+            parent::__construct();
+            // your own logic
+        }
+        /**
+         * @var string $sinaweiboId
+         * 
+         * @ORM\Column(name="sinaweibo_id", type="string", length=80, nullable=true)
+         */
+        private $sinaweiboId;
+        
+        /**
+         * @var string $sinaweiboUsername
+         * 
+         * @ORM\Column(name="sinaweibo_username", type="string", length=100, nullable=true)
+         */
+        private $sinaweiboUsername;
+        
+        /**
+         * Get id
+         *
+         * @return integer $id
+         */
+        public function getId()
+        {
+            return $this->id;
+        }
+        
     
-    /**
-     * Get id
-     *
-     * @return integer $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+        /**
+         * Set sinaweiboId
+         *
+         * @param string $sinaweiboId
+         * @return User
+         */
+        public function setSinaweiboId($sinaweiboId)
+        {
+            $this->sinaweiboId = $sinaweiboId;
+            $this->setUsername($sinaweiboId);
+            return $this;
+        }
     
-
-    /**
-     * Set sinaweiboId
-     *
-     * @param string $sinaweiboId
-     * @return User
-     */
-    public function setSinaweiboId($sinaweiboId)
-    {
-        $this->sinaweiboId = $sinaweiboId;
-        $this->setUsername($sinaweiboId);
-        return $this;
-    }
-
-    /**
-     * Get sinaweiboId
-     *
-     * @return string 
-     */
-    public function getSinaweiboId()
-    {
-        return $this->sinaweiboId;
-    }
-
-    /**
-     * Set sinaweiboUsername
-     *
-     * @param string $sinaweiboUsername
-     * @return User
-     */
-    public function setSinaweiboUsername($sinaweiboUsername)
-    {
-        $this->sinaweiboUsername = $sinaweiboUsername;
+        /**
+         * Get sinaweiboId
+         *
+         * @return string 
+         */
+        public function getSinaweiboId()
+        {
+            return $this->sinaweiboId;
+        }
     
-        return $this;
-    }
+        /**
+         * Set sinaweiboUsername
+         *
+         * @param string $sinaweiboUsername
+         * @return User
+         */
+        public function setSinaweiboUsername($sinaweiboUsername)
+        {
+            $this->sinaweiboUsername = $sinaweiboUsername;
+        
+            return $this;
+        }
+    
+        /**
+         * Get sinaweiboUsername
+         *
+         * @return string 
+         */
+        public function getSinaweiboUsername()
+        {
+            return $this->sinaweiboUsername;
+        }
+```
 
-    /**
-     * Get sinaweiboUsername
-     *
-     * @return string 
-     */
-    public function getSinaweiboUsername()
-    {
-        return $this->sinaweiboUsername;
-    }
-
-   6. 在config.yml中增加你的用户模块 
+  6. 在config.yml中增加你的用户模块
+   
 ``` yaml
 # app/config/config.yml
 services:
@@ -176,20 +182,25 @@ services:
 ```
   
   7. 配置`新浪微博`组件:
+``` yaml
             #app/config/config.yml
             giko_sinaweibo:
                 file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
                 consumer_key: xxxxxx
                 consumer_secret: xxxxxx
                 callback_url: http://localhost:8000/login_check
+```
 * Note: config.yml中的callback_url 必须与新浪微博接口中回调地址设置一致。
 
   8. 增加新浪微博路由设置：
+``` yaml
             #app/config/routing.yml
             giko_sinaweibo:
                 resource: "@GikoSinaweiboBundle/Resources/config/routing.yml"
                 prefix:   /
+```
   9. 在安全配置中，增加以下设置:
+``` yaml
             #app/config/security.yml
             security:
                 providers:
@@ -210,6 +221,7 @@ services:
                           provider: wodula_giko_sinaweibo_provider
                         logout: true
                         anonymous: true
+```
    10. 好吧，我承认，上面的流程太长了点。不过，幸运的是， 你终于可以放置这个微博按钮了：
 在模板文件中，放置新浪微博的登陆按钮
 
@@ -217,7 +229,6 @@ services:
          <a href="{{ path ('connect_sinaweibo')}}"> <img src="/images/sinaweiboLoginButton.png"></a> 
 
 ```
-
 
 
 
