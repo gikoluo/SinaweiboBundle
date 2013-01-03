@@ -297,7 +297,9 @@
 ```
 
 ### Step 10.  好吧
- 好吧，我承认，上面的流程太长了点。我不该这么折磨你。其实在Example中，有现成的代码。按照需要，提取到你的代码中即可。
+
+
+ 好吧，我承认，上面的流程太长了点。我不该这么折磨你。其实在 [doc/Example](https://github.com/gikoluo/SinaweiboBundle/tree/master/doc/Example) 中，有现成的代码。按照需要，提取到你的代码中即可。
  
  
 
