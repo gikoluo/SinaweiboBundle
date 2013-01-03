@@ -1,0 +1,53 @@
+jms_security_extra:
+    secure_all_services: false
+    expressions: true
+
+security:
+    providers:
+        chain_provider:
+            chain:
+                providers: [fos_userbundle, giko_sinaweibobundle]
+        fos_userbundle:
+            id: fos_user.user_provider.username
+        giko_sinaweibobundle:
+            id: giko_sinaweibo.user_provider.sina
+            
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern:  ^/demo/secured/login$
+            security: false
+        public:
+            pattern:  /
+            giko_sinaweibo:
+              login_path: /sinaweibo/login
+              check_path: /sinaweibo/login_check
+              default_target_path: /sinaweibo/callback
+              provider: giko_sinaweibobundle
+            logout: true
+            anonymous: true
+        secured_area:
+            pattern:    ^/demo/secured/
+            form_login:
+                check_path: /demo/secured/login_check
+                login_path: /demo/secured/login
+            logout:
+                path:   /demo/secured/logout
+                target: /demo/
+            #anonymous: ~
+            #http_basic:
+            #    realm: "Secured Demo Area"
+
+    access_control:
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
