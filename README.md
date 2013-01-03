@@ -43,186 +43,167 @@
 ```
   4. 配置FOS User。 
 * Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
-```yaml
-            #app/config/config.yml
-            #FOS User
-            fos_user:
-                db_driver:      orm # can be orm or odm
-                firewall_name:  main
-                user_class:     Acme\UserBundle\Entity\User
-                use_listener:           true
-                use_username_form_type: true
-                service:
-                    mailer:                 fos_user.mailer.default
-                    email_canonicalizer:    fos_user.util.canonicalizer.default
-                    username_canonicalizer: fos_user.util.canonicalizer.default
-                    token_generator:        fos_user.util.token_generator.default
-                    user_manager:           fos_user.user_manager.default
-                group:
-                    group_class: Acme\UserBundle\Entity\Group
-                profile:
-                    form:
-                        type:               fos_user_profile
-                        name:               fos_user_profile_form
-                        validation_groups:  [Profile, Default]
+
+``` yaml
+    #app/config/config.yml
+    #FOS User
+    fos_user:
+        db_driver:      orm # can be orm or odm
+        firewall_name:  main
+        user_class:     Acme\UserBundle\Entity\User
+        use_listener:           true
+        use_username_form_type: true
+        service:
+            mailer:                 fos_user.mailer.default
+            email_canonicalizer:    fos_user.util.canonicalizer.default
+            username_canonicalizer: fos_user.util.canonicalizer.default
+            token_generator:        fos_user.util.token_generator.default
+            user_manager:           fos_user.user_manager.default
+        group:
+            group_class: Acme\UserBundle\Entity\Group
+        profile:
+            form:
+                type:               fos_user_profile
+                name:               fos_user_profile_form
+                validation_groups:  [Profile, Default]
 ```
   5. 使用FOSUserBundle建立你自己的用户模块
-
   建立用户Model，并增加几个新浪微博字段：
 ``` php
-    <?php
-    // src/Acme/UserBundle/Entity/User.php
-     
-    namespace Acme\UserBundle\Entity;
-    use FOS\UserBundle\Entity\User as BaseUser;
-    use Doctrine\ORM\Mapping as ORM;
-     
-    /**
-     * @ORM\Entity
-     * @ORM\Table(name="fos_user")
-     */
-    class User extends BaseUser
-    {
-        /**
-         * @ORM\Id
-         * @ORM\Column(type="integer")
-         * @ORM\GeneratedValue(strategy="AUTO")
-         */
-        protected $id;
-    
-        public function __construct()
-        {
-            parent::__construct();
-            // your own logic
-        }
-        /**
-         * @var string $sinaweiboId
-         * 
-         * @ORM\Column(name="sinaweibo_id", type="string", length=80, nullable=true)
-         */
-        private $sinaweiboId;
-        
-        /**
-         * @var string $sinaweiboUsername
-         * 
-         * @ORM\Column(name="sinaweibo_username", type="string", length=100, nullable=true)
-         */
-        private $sinaweiboUsername;
-        
-        /**
-         * Get id
-         *
-         * @return integer $id
-         */
-        public function getId()
-        {
-            return $this->id;
-        }
-        
-    
-        /**
-         * Set sinaweiboId
-         *
-         * @param string $sinaweiboId
-         * @return User
-         */
-        public function setSinaweiboId($sinaweiboId)
-        {
-            $this->sinaweiboId = $sinaweiboId;
-            $this->setUsername($sinaweiboId);
-            return $this;
-        }
-    
-        /**
-         * Get sinaweiboId
-         *
-         * @return string 
-         */
-        public function getSinaweiboId()
-        {
-            return $this->sinaweiboId;
-        }
-    
-        /**
-         * Set sinaweiboUsername
-         *
-         * @param string $sinaweiboUsername
-         * @return User
-         */
-        public function setSinaweiboUsername($sinaweiboUsername)
-        {
-            $this->sinaweiboUsername = $sinaweiboUsername;
-        
-            return $this;
-        }
-    
-        /**
-         * Get sinaweiboUsername
-         *
-         * @return string 
-         */
-        public function getSinaweiboUsername()
-        {
-            return $this->sinaweiboUsername;
-        }
-```
+<?php
+// src/Acme/UserBundle/Entity/User.php
 
-  6. 在config.yml中增加你的用户模块
-   
-``` yaml
-# app/config/config.yml
-services:
-    acme.sinaweibo.user:
-        class: Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider
-        arguments:
-            sinaweibo_oauth: "@giko_sinaweibo.api"
-            userManager: "@fos_user.user_manager"
-            validator: "@validator"
-            session: "@session"
+namespace Acme\UserBundle\Entity;
+
+use FOS\UserBundle\Entity\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser {
+  /**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue(strategy="AUTO")
+	 */
+	protected $id;
+
+	public function __construct() {
+		parent::__construct();
+		// your own logic
+	}
+	/**
+	 * @var string $sinaweiboId
+	 * 
+	 * @ORM\Column(name="sinaweibo_id", type="string", length=80, nullable=true)
+	 */
+	private $sinaweiboId;
+
+	/**
+	 * @var string $sinaweiboUsername
+	 * 
+	 * @ORM\Column(name="sinaweibo_username", type="string", length=100, nullable=true)
+	 */
+	private $sinaweiboUsername;
+
+	/**
+	 * Get id
+	 *
+	 * @return integer $id
+	 */
+	public function getId() {
+		return $this->id;
+	}
+
+	/**
+	 * Set sinaweiboId
+	 *
+	 * @param string $sinaweiboId
+	 * @return User
+	 */
+	public function setSinaweiboId($sinaweiboId) {
+		$this->sinaweiboId = $sinaweiboId;
+		$this->setUsername($sinaweiboId);
+		return $this;
+	}
+
+	/**
+	 * Get sinaweiboId
+	 *
+	 * @return string 
+	 */
+	public function getSinaweiboId() {
+		return $this->sinaweiboId;
+	}
+
+	/**
+	 * Set sinaweiboUsername
+	 *
+	 * @param string $sinaweiboUsername
+	 * @return User
+	 */
+	public function setSinaweiboUsername($sinaweiboUsername) {
+		$this->sinaweiboUsername = $sinaweiboUsername;
+
+		return $this;
+	}
+
+	/**
+	 * Get sinaweiboUsername
+	 *
+	 * @return string 
+	 */
+	public function getSinaweiboUsername() {
+		return $this->sinaweiboUsername;
+	}
+}
+
 ```
   
-  7. 配置`新浪微博`组件:
+  6. 配置`新浪微博`组件:
 ``` yaml
-            #app/config/config.yml
-            giko_sinaweibo:
-                file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
-                consumer_key: xxxxxx
-                consumer_secret: xxxxxx
-                callback_url: http://localhost:8000/login_check
+#app/config/config.yml
+giko_sinaweibo:
+    file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
+    consumer_key: xxxxxx
+    consumer_secret: xxxxxx
+    callback_url: http://localhost:8000/login_check
 ```
-* Note: config.yml中的callback_url 必须与新浪微博接口中回调地址设置一致。
+* Note: config.yml中的```callback_url```必须与新浪微博接口中回调地址设置一致。
 
-  8. 增加新浪微博路由设置：
+  7. 增加新浪微博路由设置：
 ``` yaml
-            #app/config/routing.yml
+#app/config/routing.yml
+giko_sinaweibo:
+    resource: "@GikoSinaweiboBundle/Resources/config/routing.yml"
+    prefix:   /
+```
+  8. 在安全配置中，增加以下设置:
+``` yaml
+#app/config/security.yml
+security:
+    providers:
+        chain_provider:
+            chain:
+                providers: [fos_userbundle, wodula_giko_sinaweibo_provider]
+        fos_userbundle:
+            id: fos_user.user_provider.username
+        wodula_giko_sinaweibo_provider:
+            id: wodula.sinaweibo.user
+    firewalls:
+        public:
+            pattern:  /
             giko_sinaweibo:
-                resource: "@GikoSinaweiboBundle/Resources/config/routing.yml"
-                prefix:   /
+              login_path: /sinaweibo/login
+              check_path: /sinaweibo/login_check
+              default_target_path: /sinaweibo/callback
+              provider: wodula_giko_sinaweibo_provider
+            logout: true
+            anonymous: true
 ```
-  9. 在安全配置中，增加以下设置:
-``` yaml
-            #app/config/security.yml
-            security:
-                providers:
-                    chain_provider:
-                        chain:
-                            providers: [fos_userbundle, wodula_giko_sinaweibo_provider]
-                    fos_userbundle:
-                        id: fos_user.user_provider.username
-                    wodula_giko_sinaweibo_provider:
-                        id: wodula.sinaweibo.user
-                firewalls:
-                    public:
-                        pattern:  /
-                        giko_sinaweibo:
-                          login_path: /sinaweibo/login
-                          check_path: /sinaweibo/login_check
-                          default_target_path: /sinaweibo/callback
-                          provider: wodula_giko_sinaweibo_provider
-                        logout: true
-                        anonymous: true
-```
-   10. 好吧，我承认，上面的流程太长了点。不过，幸运的是， 你终于可以放置这个微博按钮了：
+  10. 好吧，我承认，上面的流程太长了点。不过，幸运的是，现在你终于可以放置这个微博按钮了：
 在模板文件中，放置新浪微博的登陆按钮
 
 ```
