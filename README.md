@@ -1,147 +1,96 @@
-Introduction
+介绍
 ============
 
+本组件可将新浪微博集成到Symfony2中。 组件提供新浪微博登陆认证，并可利用新浪微博接口进行微博发布等分享行为。
+本组件整合FOSUserBundle，保存新浪微博登陆后的用户信息
 
-WARNING: DO NOT fork or install now, It hasn't finished yes.
+``组件仅支持Symfony2.1+``
 
-
-This Bundle enables integration with Twitter PHP. Furthermore it
-also provides a Symfony2 authentication provider so that users can login to a
-Symfony2 application via Twitter. Furthermore via custom user provider support
-the Twitter login can also be integrated with other data sources like the
-database based solution provided by FOSUserBundle.
-
-``If you are using Symfony 2.0 switch to the branch v1.0 of TwitterBundle or use the tag 1.0.0``
-
-[![Build Status](https://secure.travis-ci.org/FriendsOfSymfony/FOSTwitterBundle.png)](http://travis-ci.org/FriendsOfSymfony/FOSTwitterBundle)
-
-Installation
+安装
 ============
 
-  1. Add this bundle and Abraham Williams' Twitter library to your project as Git submodules:
+  1. 将本组件 ```giko/sinaweibo-bundle``` 和 ```friendsofsymfony/user-bundle```  添加到 ``composer.json`` 文件:
+        "repositories": [
+            {
+                "type": "vcs",
+                "url":  "https://github.com/gikoluo/SinaWeiboBundle.git"
+            }
+        ],
+        "require": {
+            #...
+            "friendsofsymfony/user-bundle": "dev-master",
+            "giko/sinaweibo-bundle": "dev-master",
+        }
+    
+  2. 使用Git submodules的方式将 ElmerZhang / WeiboSDK 新浪微博代码添加代码库。 或者你也可以通过手动下载的方式下载并解压到对应的目录。 
+          $ git submodule add git://github.com/ElmerZhang/WeiboSDK.git vendor/sinalib
 
-          $ git submodule add git://github.com/FriendsOfSymfony/FOSTwitterBundle.git vendor/bundles/FOS/TwitterBundle
-          $ git submodule add git://github.com/kertz/twitteroauth.git vendor/twitteroauth
-
->**Note:** The kertz/twitteroauth is patched to be compatible with FOSTwitterBundle
-
-  2. Register the namespace `Giko` to your project's autoloader bootstrap script:
-
-          //app/autoload.php
-          $loader->registerNamespaces(array(
-                // ...
-                'Giko'    => __DIR__.'/../vendor/bundles',
-                // ...
-          ));
-
-  3. Add this bundle to your application's kernel:
-
+  3. 在应用内核代码中注册组件：
           //app/AppKernel.php
           public function registerBundles()
           {
               return array(
                   // ...
+                  new FOS\UserBundle\FOSUserBundle(),
                   new Giko\SinaweiboBundle\GikoSinaweiboBundle(),
                   // ...
               );
           }
-
-  4. Configure the `sinaweibo` service in your YAML configuration:
-
+  4. 配置FOS User。 
+  * Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
             #app/config/config.yml
-            giko_sinaweibo:
-                file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
-                consumer_key: xxxxxx
-                consumer_secret: xxxxxx
-                callback_url: http://localhost:8000/login_check
-
-  5. Add the following configuration to use the security component:
-
-            #app/config/security.yml
-            security:
-                providers:
-                    giko_sinaweibo:
-                        id: giko_sinaweibo.auth
-                firewalls:
-                    secured:
-                        pattern:   /secured/.*
-                        giko_sinaweibo: true
-                    public:
-                        pattern:   /.*
-                        anonymous: true
-                        giko_sinaweibo: true
-                        logout: true
-                access_control:
-                    - { path: /.*, role: [IS_AUTHENTICATED_ANONYMOUSLY] }
-
-Using Twitter @Anywhere
------------------------
-
->**Note:** If you want the Security Component to work with Twitter @Anywhere, you need to send a request to the configured check path upon successful client authentication (see https://gist.github.com/1021384 for a sample configuration).
-
-A templating helper is included for using Twitter @Anywhere. To use it, first
-call the `->setup()` method toward the top of your DOM:
-
-        <!-- inside a php template -->
-          <?php echo $view['twitter_anywhere']->setup() ?>
-        </head>
-
-        <!-- inside a twig template -->
-          {{ twitter_anywhere_setup() }}
-        </head>
-
-Once that's done, you can queue up JavaScript to be run once the library is
-actually loaded:
-
-        <!-- inside a php template -->
-        <span id="twitter_connect"></span>
-        <?php $view['twitter_anywhere']->setConfig('callbackURL', 'http://www.example.com/login_check') ?>
-        <?php $view['twitter_anywhere']->queue('T("#twitter_connect").connectButton()') ?>
-
-        <!-- inside a twig template -->
-        <span id="twitter_connect"></span>
-        {{ twitter_anywhere_setConfig('callbackURL', 'http://www.example.com/login_check') }}
-        {{ twitter_anywhere_queue('T("#twitter_connect").connectButton()') }}
-
-Finally, call the `->initialize()` method toward the bottom of the DOM:
-
-        <!-- inside a php template -->
-          <?php $view['twitter_anywhere']->initialize() ?>
-        </body>
-
-        <!-- inside a twig template -->
-        {{ twitter_anywhere_initialize() }}
-        </body>
-
-### Configuring Twitter @Anywhere
-
-You can set configuration using the templating helper. with the setConfig() method.
-
-
-Example Custom User Provider using the FOSUserBundle
+            #FOS User
+            fos_user:
+                db_driver:      orm # can be orm or odm
+                firewall_name:  main
+                user_class:     Acme\UserBundle\Entity\User
+                use_listener:           true
+                use_username_form_type: true
+                service:
+                    mailer:                 fos_user.mailer.default
+                    email_canonicalizer:    fos_user.util.canonicalizer.default
+                    username_canonicalizer: fos_user.util.canonicalizer.default
+                    token_generator:        fos_user.util.token_generator.default
+                    user_manager:           fos_user.user_manager.default
+                group:
+                    group_class: Acme\UserBundle\Entity\Group
+                profile:
+                    form:
+                        type:               fos_user_profile
+                        name:               fos_user_profile_form
+                        validation_groups:  [Profile, Default]
+  
+使用FOSUserBundle建立你自己的用户模块，并与新浪微博集成
 -------------------------------------------------------
 
-
-To use this provider you will need to add a new service in your config.yml
-
-``` yaml
-# app/config/config.yml
-services:
-        my.twitter.user:
-            class: Acme\YourBundle\Security\User\Provider\TwitterProvider
-            arguments:
-                twitter_oauth: "@giko_sinaweibo.api"
-                userManager: "@fos_user.user_manager"
-                validator: "@validator"
-                session: "@session" 
-```
-
-Also you would need some new properties and methods in your User model class.
-
+建立用户Model，并增加几个新浪微博字段：
 ``` php
 <?php
-// src/Acme/YourBundle/Entity/User.php
-    
+// src/Acme/UserBundle/Entity/User.php
+
+namespace Acme\UserBundle\Entity;
+
+use FOS\UserBundle\Entity\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    public function __construct()
+    {
+        parent::__construct();
+        // your own logic
+    }
     /**
      * @var string $sinaweiboId
      * 
@@ -212,198 +161,96 @@ Also you would need some new properties and methods in your User model class.
     {
         return $this->sinaweiboUsername;
     }
-        
-```
 
-Add this field to the doctrine xml:
-
-``` xml
-//Acme/YourBundle/Resources/config/doctrine/User.orm.xml
-<entity name="Acme\YourBundle\Entity\User" table="fos_user_user">
-  <id name="id" column="id" type="integer">
-    <generator strategy="AUTO" />
-  </id>
-  <field name="sinaweiboId"    type="string"   column="sinaweibo_id" length="255"    nullable="true" />
-  <field name="sinaweiboUsername"    type="string"   column="sinaweibo_username" length="255"    nullable="true" />
-</entity>
-```
->**Note:** You are forced to use the XML definition by fos and sonata user bundles. Anotations is not effective.
-
-
-And this is the TwitterProvider class
-
-``` php
-<?php
-// src/Acme/YourBundle/Security/User/Provider/TwitterProvider.php
-
-
-namespace Acme\YourBundle\Security\User\Provider;
-
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\Session;
-use \TwitterOAuth;
-use FOS\UserBundle\Entity\UserManager;
-use Symfony\Component\Validator\Validator;
-
-class TwitterProvider implements UserProviderInterface
-{
-    /** 
-     * @var \Twitter
-     */
-    protected $twitter_oauth;
-    protected $userManager;
-    protected $validator;
-    protected $session;
-
-    public function __construct(TwitterOAuth $twitter_oauth, UserManager $userManager,Validator $validator, Session $session)
-    {   
-        $this->twitter_oauth = $twitter_oauth;
-        $this->userManager = $userManager;
-        $this->validator = $validator;
-        $this->session = $session;
-    }   
-
-    public function supportsClass($class)
-    {   
-        return $this->userManager->supportsClass($class);
-    }   
-
-    public function findUserByTwitterId($twitterID)
-    {   
-        return $this->userManager->findUserBy(array('twitterID' => $twitterID));
-    }   
-
-    public function loadUserByUsername($username)
-    {
-        $user = $this->findUserByTwitterId($username);
-
-
-         $this->twitter_oauth->setOAuthToken( $this->session->get('access_token') , $this->session->get('access_token_secret'));
-
-        try {
-             $info = $this->twitter_oauth->get('account/verify_credentials');
-        } catch (Exception $e) {
-             $info = null;
-        }
-
-        if (!empty($info)) {
-            if (empty($user)) {
-                $user = $this->userManager->createUser();
-                $user->setEnabled(true);
-                $user->setPassword('');
-                $user->setAlgorithm('');
-            }
-
-            $username = $info->screen_name;
-
-
-            $user->setTwitterID($info->id);
-            $user->setTwitterUsername($username);
-            $user->setEmail('');
-            $user->setFirstname($info->name);
-
-            $this->userManager->updateUser($user);
-        }
-
-        if (empty($user)) {
-            throw new UsernameNotFoundException('The user is not authenticated on twitter');
-        }
-
-        return $user;
-
-    }
-
-    public function refreshUser(UserInterface $user)
-    {
-        if (!$this->supportsClass(get_class($user)) || !$user->getTwitterID()) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
-        }
-
-        return $this->loadUserByUsername($user->getTwitterID());
-    }
-}
-```
-
-
-Finally, to get the authentication tokens from Twitter you would need to create an action in your controller like this one.
-
-``` php
-
-<?php
-// src/Acme/YourBundle/Controller/DefaultController.php
-
-        /** 
-        * @Route("/connectTwitter", name="connect_twitter")
-        *
-        */
-        public function connectTwitterAction()
-        {   
-
-          $request = $this->get('request');
-          $twitter = $this->get('giko_sinaweibo.service');
-
-          $authURL = $twitter->getLoginUrl($request);
-
-          $response = new RedirectResponse($authURL);
-
-          return $response;
-
-        }  
-
-```
-
-You can create a button in your Twig template that will send the user to authenticate with Twitter.
-
-```
-         <a href="{{ path ('connect_twitter')}}"> <img src="/images/twitterLoginButton.png"></a> 
-
-```
-
-* Note: Your callback URL in your config.yml must point to your configured check_path
-
+   6. 在config.yml中增加你的用户模块 
 ``` yaml
 # app/config/config.yml
+services:
+    acme.sinaweibo.user:
+        class: Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider
+        arguments:
+            sinaweibo_oauth: "@giko_sinaweibo.api"
+            userManager: "@fos_user.user_manager"
+            validator: "@validator"
+            session: "@session"
+```
+  
+  7. 配置`新浪微博`组件:
+            #app/config/config.yml
+            giko_sinaweibo:
+                file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
+                consumer_key: xxxxxx
+                consumer_secret: xxxxxx
+                callback_url: http://localhost:8000/login_check
+* Note: config.yml中的callback_url 必须与新浪微博接口中回调地址设置一致。
 
-        giko_sinaweibo:
-            ...
-            callback_url: http://www.yoursite.com/twitter/login_check
+  8. 增加新浪微博路由设置：
+            #app/config/routing.yml
+            giko_sinaweibo:
+                resource: "@GikoSinaweiboBundle/Resources/config/routing.yml"
+                prefix:   /
+  9. 在安全配置中，增加以下设置:
+            #app/config/security.yml
+            security:
+                providers:
+                    chain_provider:
+                        chain:
+                            providers: [fos_userbundle, wodula_giko_sinaweibo_provider]
+                    fos_userbundle:
+                        id: fos_user.user_provider.username
+                    wodula_giko_sinaweibo_provider:
+                        id: wodula.sinaweibo.user
+                firewalls:
+                    public:
+                        pattern:  /
+                        giko_sinaweibo:
+                          login_path: /sinaweibo/login
+                          check_path: /sinaweibo/login_check
+                          default_target_path: /sinaweibo/callback
+                          provider: wodula_giko_sinaweibo_provider
+                        logout: true
+                        anonymous: true
+   10. 好吧，我承认，上面的流程太长了点。不过，幸运的是， 你终于可以放置这个微博按钮了：
+在模板文件中，放置新浪微博的登陆按钮
+
+```
+         <a href="{{ path ('connect_sinaweibo')}}"> <img src="/images/sinaweiboLoginButton.png"></a> 
+
 ```
 
-Remember to edit your security.yml to use this provider
 
 
-``` yaml
-# app/config/security.yml
 
-        security:
-            encoders:
-                Symfony\Component\Security\Core\User\User: plaintext
+使用 新浪微博小组件 @JS-Widget
+-----------------------
 
-            role_hierarchy:
-                ROLE_ADMIN:       ROLE_USER
-                ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+组件已包含了用户@JS-Widget的模板插件，使用前，需要在你的模板文件的顶部中进行注册：
 
-            providers:
+        <!-- inside a php template -->
+          <?php echo $view['sinaweibo_anywhere']->setup() ?>
+        </head>
 
-                my_giko_sinaweibo_provider:
-                    id: my.twitter.user 
+        <!-- inside a twig template -->
+          {{ sinaweibo_anywhere_setup() }}
+        </head>
 
-            firewalls:
-                dev:
-                    pattern:  ^/(_(profiler|wdt)|css|images|js)/
-                    security: false
+注册好了之后，在你需要放置按钮的地方，写这么一段JS代码：
+        <!-- inside a php template -->
+        <span id="sinaweibo_connect"></span>
+        <?php $view['sinaweibo_anywhere']->setConfig('callbackURL', 'http://www.example.com/login_check') ?>
+        <?php $view['sinaweibo_anywhere']->queue('T("#sinaweibo_connect").connectButton()') ?>
 
-                public:
-                    pattern:  /
-                    giko_sinaweibo:
-                        login_path: /twitter/login
-                        check_path: /twitter/login_check
-                        default_target_path: /
-                        provider: my_giko_sinaweibo_provider
+        <!-- inside a twig template -->
+        <span id="sinaweibo_connect"></span>
+        {{ sinaweibo_anywhere_setConfig('callbackURL', 'http://www.example.com/login_check') }}
+        {{ sinaweibo_anywhere_queue('T("#sinaweibo_connect").connectButton()') }}
 
-                    anonymous: ~
+最后，调用`->initialize()`方法来完成所有的工作：
+        <!-- inside a php template -->
+          <?php $view['sinaweibo_anywhere']->initialize() ?>
+        </body>
 
-```
+        <!-- inside a twig template -->
+        {{ sinaweibo_anywhere_initialize() }}
+        </body>
+
