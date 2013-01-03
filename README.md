@@ -180,43 +180,52 @@
 ### Step 7. 建立新浪微博Controller：
 ``` php
 	<?php
-	namespace Acme\UserBundle\Controller;
-	
-	class LoginController extends Controller {
-	    /**
-	     * @Route("/connect_sinaweibo", name="connect_sinaweibo")
-	     * 
-	     */
-	    public function sinaAction()
-	    {
-	        $request = $this->get('request');
-	        $sinaweibo = $this->get('giko_sinaweibo.service');
-	        $authURL = $sinaweibo->getLoginUrl($request);
-	        $response = new RedirectResponse($authURL);
-	        return $response;
-	    }
-	    
-	    /**
-	     * @Route("/callback_sinaweibo", name="callback_sinaweibo")
-	     *
-	     */
-	    public function callbackSinaweiboAction()
-	    {
-	        /**
-	         * @return Response
-	         *
-	         * @throws AccessDeniedException
-	         */
-	        $user = $this->getUser();
-	        $sinaweibo = $this->get('giko_sinaweibo.service');
-	        $sinaInfo = $sinaweibo->getClient()->show_user_by_id($user->getSinaweiboId());
-	        $data = array('user'=>$user, 'weiboInfo' => $user);
-	        $serializer = SerializerBuilder::create()->build();
-	        $res = $serializer->serialize($data, 'json');
-	        
-	        return new Response($res);
-	    }
-	}
+    namespace Acme\UserBundle\Controller;
+    
+    use Symfony\Component\HttpFoundation\RedirectResponse;
+    class SinaController extends Controller {
+        /**
+         * @Route("/connect_sinaweibo", name="connect_sinaweibo")
+         * 
+         */
+        public function sinaAction()
+        {
+            $request = $this->get('request');
+            $sinaweibo = $this->get('giko_sinaweibo.service');
+            $authURL = $sinaweibo->getLoginUrl($request);
+            $response = new RedirectResponse($authURL);
+            return $response;
+        }
+        
+        /**
+         * @Route("/callback_sinaweibo", name="callback_sinaweibo")
+         *
+         */
+        public function callbackSinaweiboAction()
+        {
+            /**
+             * @return Response
+             *
+             * @throws AccessDeniedException
+             */
+            $user = $this->getUser();
+            $sinaweibo = $this->get('giko_sinaweibo.service');
+            $sinaInfo = $sinaweibo->getClient()->show_user_by_id($user->getSinaweiboId());
+            $data = array('user'=>$user, 'weiboInfo' => $user);
+            
+            var_dump($data);
+            //your login here
+            exit;
+        }
+    }
+```
+
+增加Route
+```
+    user_login:
+        resource: "@AcmeUserBundle/Controller/"
+        type:     annotation
+        prefix:   /
 ```
 
 ### Step 8. 在安全配置中，增加以下设置:
@@ -241,6 +250,8 @@
 	              provider: wodula_giko_sinaweibo_provider
 	            logout: true
 	            anonymous: true
+	    access_control:
+	       - { path: ^/sinaweibo.*, role: ROLE_USER }
 ```
 
 ### Step 9. 好吧，我承认，上面的流程太长了点。不过，幸运的是，现在你终于可以放置这个微博按钮了：
