@@ -298,8 +298,12 @@
 
 ### Step 10.  好吧
  好吧，我承认，上面的流程太长了点。我不该这么折磨你。其实在Example中，有现成的代码。按照需要，提取到你的代码中即可。
- 如果，咳咳，我的代码对你有帮助，请给我买杯咖啡吧。<a href="https://me.alipay.com/giko"><img src="" alt="通过支付宝捐赠"></a>
  
+ 
+
+-----------------------
+如果，咳咳，我的代码对你有帮助，请给我买杯咖啡吧。<a href="https://me.alipay.com/giko"><img src="https://raw.github.com/gikoluo/SinaweiboBundle/master/doc/donate-with-alipay.png" alt="通过支付宝捐赠"></a>
+-----------------------
 
 使用 新浪微博小组件 @JS-Widget
 -----------------------
