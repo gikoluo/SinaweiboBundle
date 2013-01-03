@@ -18,6 +18,7 @@
 
         <parameter key="giko_sinaweibo.api.class">Giko\SinaweiboBundle\Services\SinaweiboOAuth</parameter>
         <parameter key="giko_sinaweibo.service.class">Giko\SinaweiboBundle\Services\Sinaweibo</parameter>
+        <parameter key="giko_sinaweibo.user_provide.class">Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider</parameter>
     </parameters>
     
     <services>
@@ -49,7 +50,7 @@
             <tag name="twig.extension" />
         </service>
         
-        <service id="giko_sinaweibo.user_provider.sina" class="Giko\SinaweiboBundle\Security\User\Provider\SinaweiboProvider">
+        <service id="giko_sinaweibo.user_provider.sina" class="%giko_sinaweibo.user_provide.class%">
             <argument type="service" id="giko_sinaweibo.api"/>
             <argument type="service" id="fos_user.user_manager" />
             <argument type="service" id="validator" />

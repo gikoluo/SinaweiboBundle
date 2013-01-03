@@ -51,6 +51,8 @@ class SinaweiboProvider implements UserProviderInterface
         } catch (Exception $e) {
              $info = null;
         }
+        var_dump($info);
+        exit;
         if (!empty($info)) {
             if (empty($user)) {
                 $user = $this->userManager->createUser();
@@ -62,7 +64,6 @@ class SinaweiboProvider implements UserProviderInterface
             $user->setSinaweiboId($info['id']);
             $user->setSinaweiboUsername($username);
             $user->setEmail('');
-            $user->setFirstname($info['name']);
             $rs = $this->userManager->updateUser($user);
         }
         if (empty($user)) {

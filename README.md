@@ -25,7 +25,8 @@
         }
 ```
 
-### Step 2. 使用Git submodules的方式将 ElmerZhang / WeiboSDK 新浪微博代码添加代码库。 或者你也可以通过手动下载的方式下载并解压到对应的目录。 
+### Step 2. 使用Git submodules的方式将 ElmerZhang / WeiboSDK 新浪微博代码添加代码库。 或者你也可以通过手动下载的方式下载并解压到对应的目录。
+此步骤现在省略吧。  ```giko/sinaweibo-bundle``` 中已经自带了一个WeiboSDK copy，而且修改了几行代码来解决一个notiec错误。。
 ```
           $ git submodule add git://github.com/ElmerZhang/WeiboSDK.git vendor/sinalib
 ```
@@ -45,7 +46,7 @@
 ```
 
 ### Step 4. 配置FOS User。 
-*> Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
+> Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
         
 ```
 	#app/config/config.yml
@@ -254,13 +255,13 @@
 	       - { path: ^/sinaweibo.*, role: ROLE_USER }
 ```
 
-### Step 9. 好吧，我承认，上面的流程太长了点。不过，幸运的是，现在你终于可以放置这个微博按钮了：
-在模板文件中，放置新浪微博的登陆按钮
+### Step 9. 在模板文件中，放置新浪微博的登陆按钮
 
 ```
          <a href="{{ path ('connect_sinaweibo')}}"> <img src="/images/sinaweiboLoginButton.png"></a> 
 ```
-
+### Step 10.  好吧
+ 好吧，我承认，上面的流程太长了点。我不该这么折磨你。其实在Example中，有现成的代码。按照需要，提取到你的代码中即可。
 
 
 使用 新浪微博小组件 @JS-Widget
