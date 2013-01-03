@@ -46,30 +46,38 @@
   4. 配置FOS User。 
 * Note: 关于FOS User的更多信息，请参考 https://github.com/FriendsOfSymfony/FOSUserBundle
 ``` yaml
-    #app/config/config.yml
-    #FOS User
-    fos_user:
-        db_driver:      orm # can be orm or odm
-        firewall_name:  main
-        user_class:     Acme\UserBundle\Entity\User
-        use_listener:           true
-        use_username_form_type: true
-        service:
-            mailer:                 fos_user.mailer.default
-            email_canonicalizer:    fos_user.util.canonicalizer.default
-            username_canonicalizer: fos_user.util.canonicalizer.default
-            token_generator:        fos_user.util.token_generator.default
-            user_manager:           fos_user.user_manager.default
-        group:
-            group_class: Acme\UserBundle\Entity\Group
-        profile:
-            form:
-                type:               fos_user_profile
-                name:               fos_user_profile_form
-                validation_groups:  [Profile, Default]
+	#app/config/config.yml
+	#FOS User
+	fos_user:
+	db_driver:      orm # can be orm or odm
+	firewall_name:  main
+	user_class:     Acme\UserBundle\Entity\User
+	use_listener:           true
+	use_username_form_type: true
+	service:
+	    mailer:                 fos_user.mailer.default
+	    email_canonicalizer:    fos_user.util.canonicalizer.default
+	    username_canonicalizer: fos_user.util.canonicalizer.default
+	    token_generator:        fos_user.util.token_generator.default
+	    user_manager:           fos_user.user_manager.default
+	group:
+	    group_class: Acme\UserBundle\Entity\Group
+	profile:
+	    form:
+	        type:               fos_user_profile
+	        name:               fos_user_profile_form
+	        validation_groups:  [Profile, Default]
 ```
-
-  5. 使用FOSUserBundle建立你自己的用户模块
+  5. 配置`新浪微博`组件:
+``` yaml
+	#app/config/config.yml
+	giko_sinaweibo:
+	    file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
+	    consumer_key: xxxxxx
+	    consumer_secret: xxxxxx
+	    callback_url: http://localhost:8000/login_check
+```
+  6. 使用FOSUserBundle建立你自己的用户模块
   建立用户Model，并增加几个新浪微博字段：
 ``` php
 	<?php
@@ -163,23 +171,48 @@
 	}
 ```
   
-  6. 配置`新浪微博`组件:
-``` yaml
-	#app/config/config.yml
-	giko_sinaweibo:
-	    file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
-	    consumer_key: xxxxxx
-	    consumer_secret: xxxxxx
-	    callback_url: http://localhost:8000/login_check
-```
 * Note: config.yml中的```callback_url```必须与新浪微博接口中回调地址设置一致。
 
-  7. 增加新浪微博路由设置：
-``` yaml
-	#app/config/routing.yml
-	giko_sinaweibo:
-	    resource: "@GikoSinaweiboBundle/Resources/config/routing.yml"
-	    prefix:   /
+  7. 建立新浪微博Controller：
+``` php
+	<?php
+	namespace Acme\UserBundle\Controller;
+	
+	class LoginController extends Controller {
+	    /**
+	     * @Route("/connect_sinaweibo", name="connect_sinaweibo")
+	     * 
+	     */
+	    public function sinaAction()
+	    {
+	        $request = $this->get('request');
+	        $sinaweibo = $this->get('giko_sinaweibo.service');
+	        $authURL = $sinaweibo->getLoginUrl($request);
+	        $response = new RedirectResponse($authURL);
+	        return $response;
+	    }
+	    
+	    /**
+	     * @Route("/callback_sinaweibo", name="callback_sinaweibo")
+	     *
+	     */
+	    public function callbackSinaweiboAction()
+	    {
+	        /**
+	         * @return Response
+	         *
+	         * @throws AccessDeniedException
+	         */
+	        $user = $this->getUser();
+	        $sinaweibo = $this->get('giko_sinaweibo.service');
+	        $sinaInfo = $sinaweibo->getClient()->show_user_by_id($user->getSinaweiboId());
+	        $data = array('user'=>$user, 'weiboInfo' => $user);
+	        $serializer = SerializerBuilder::create()->build();
+	        $res = $serializer->serialize($data, 'json');
+	        
+	        return new Response($res);
+	    }
+	}
 ```
   8. 在安全配置中，增加以下设置:
 ``` yaml
@@ -204,7 +237,7 @@
 	            logout: true
 	            anonymous: true
 ```
-  10. 好吧，我承认，上面的流程太长了点。不过，幸运的是，现在你终于可以放置这个微博按钮了：
+  9. 好吧，我承认，上面的流程太长了点。不过，幸运的是，现在你终于可以放置这个微博按钮了：
 在模板文件中，放置新浪微博的登陆按钮
 
 ```
