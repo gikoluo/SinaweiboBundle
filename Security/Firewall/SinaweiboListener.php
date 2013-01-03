@@ -23,10 +23,15 @@ use Symfony\Component\HttpFoundation\Request;
 class SinaweiboListener extends AbstractAuthenticationListener
 {
     private $useSinaweiboAnywhere = false;
+    private $service;
 
     public function setUseSinaweiboAnywhere($bool)
     {
         $this->useSinaweiboAnywhere = (Boolean) $bool;
+    }
+    
+    public function setService($service) {
+        $this->service = $service;
     }
 
     protected function attemptAuthentication(Request $request)
@@ -41,7 +46,7 @@ class SinaweiboListener extends AbstractAuthenticationListener
 
             return $this->authenticationManager->authenticate(SinaweiboAnywhereToken::createUnauthenticated(substr($identity, 0, $pos), substr($identity, $pos + 1)));
         }
-
-        return $this->authenticationManager->authenticate(new SinaweiboUserToken($request->query->get('oauth_token'), $request->query->get('oauth_verifier')));
+        $info = $this->service->getAccessToken($request->query->get('code'));
+        return $this->authenticationManager->authenticate(new SinaweiboUserToken($info['uid'], $info['access_token']));
     }
 }

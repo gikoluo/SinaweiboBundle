@@ -4,8 +4,12 @@
         twttr.anywhere.config({{ configMap|json_encode }});
     {% endif %}
 
-    twttr.anywhere(function (T) {
-        {{ scripts }}
+    WB2.anyWhere(function(W){
+    	{{ scripts }}
     });
+    
+    //twttr.anywhere(function (T) {
+    //    
+    //});
 </script>
 {% endautoescape %}

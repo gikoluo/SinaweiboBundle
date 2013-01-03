@@ -16,7 +16,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use SinaweiboOAuth;
 
 class Sinaweibo
 {
@@ -25,12 +24,28 @@ class Sinaweibo
     private $router;
     private $callbackRoute;
     private $callbackURL;
+    /**
+     * 
+     * @var Giko\SinaweiboBundle\Services\SinaweiboOAuth
+     */
+    private $client;
 
     public function __construct(SinaweiboOAuth $sinaweibo, Session $session, $callbackURL = null)
     {
         $this->sinaweibo = $sinaweibo;
         $this->session = $session;
         $this->callbackURL = $callbackURL;
+        $this->client = new \SaeTClientV2($sinaweibo->oauth->client_id, $sinaweibo->oauth->client_secret, $this->session->get('oauth_token'));
+    }
+    
+    public function getClient() {
+        return $this->client;
+    }
+    
+    public function setToken($token) {
+        $this->session->set('oauth_token', $token);
+        $this->client->oauth->access_token = $token;
+        $this->sinaweibo->oauth->access_token = $token;
     }
 
     public function setCallbackRoute(RouterInterface $router, $routeName)
@@ -42,53 +57,30 @@ class Sinaweibo
     public function getLoginUrl()
     {
         /* Get temporary credentials. */
-        $requestToken = ($callbackUrl = $this->getCallbackUrl()) ?
-            $this->sinaweibo->getRequestToken($callbackUrl)
-            : $this->sinaweibo->getRequestToken();
-
-        /* Save temporary credentials to session. */
-        $this->session->set('oauth_token', $requestToken['oauth_token']);
-        $this->session->set('oauth_token_secret', $requestToken['oauth_token_secret']);
-
-        /* If last connection failed don't display authorization link. */
-        switch ($this->sinaweibo->http_code) {
-            case 200:
-                /* Build authorize URL and redirect user to Sinaweibo. */
-                $redirectURL = $this->sinaweibo->getAuthorizeURL($requestToken);
-                return $redirectURL;
-                break;
-            default:
-                /* return null if something went wrong. */
-                return null;
-        }
+        $callbackUrl = $this->getCallbackUrl();
+        $redirectURL = $this->sinaweibo->oauth->getAuthorizeURL($callbackUrl);
+        return $redirectURL;
     }
-
-    public function getAccessToken($oauthToken, $oauthVerifier)
+    
+    public function getAccessToken($code)
     {
-        //set OAuth token in the API
-        $this->sinaweibo->setOAuthToken($oauthToken, $this->session->get('oauth_token_secret'));
-
-        /* Check if the oauth_token is old */
-        if ($this->session->has('oauth_token')) {
-            if ($this->session->get('oauth_token') && ($this->session->get('oauth_token') !== $oauthToken)) {
-                $this->session->remove('oauth_token');
-                return null;
-            }
-        }
-
         /* Request access tokens from sinaweibo */
-        $accessToken = $this->sinaweibo->getAccessToken($oauthVerifier);
-
+        $accessToken = $this->sinaweibo->oauth->getAccessToken('code', 
+                            array(
+                                    'code' => $code,
+                                    'redirect_uri' => $this->getCallbackUrl()
+                            )
+                );
         /* Save the access tokens. Normally these would be saved in a database for future use. */
-        $this->session->set('access_token', $accessToken['oauth_token']);
-        $this->session->set('access_token_secret', $accessToken['oauth_token_secret']);
+        $this->session->set('access_token', $accessToken['access_token']);
+        //$this->session->set('access_token_secret', $accessToken['oauth_token_secret']);
 
         /* Remove no longer needed request tokens */
         !$this->session->has('oauth_token') ?: $this->session->remove('oauth_token', null);
         !$this->session->has('oauth_token_secret') ?: $this->session->remove('oauth_token_secret', null);
 
         /* If HTTP response is 200 continue otherwise send to connect page to retry */
-        if (200 == $this->sinaweibo->http_code) {
+        if (200 == $this->sinaweibo->oauth->http_code) {
             /* The user has been verified and the access tokens can be saved for future use */
             return $accessToken;
         }

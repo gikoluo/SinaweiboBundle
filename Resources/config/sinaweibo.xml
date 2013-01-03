@@ -16,7 +16,7 @@
         <parameter key="giko_sinaweibo.anywhere.helper.class">Giko\SinaweiboBundle\Templating\Helper\SinaweiboAnywhereHelper</parameter>
         <parameter key="giko_sinaweibo.anywhere.twig.class">Giko\SinaweiboBundle\Twig\Extension\SinaweiboAnywhereExtension</parameter>
 
-        <parameter key="giko_sinaweibo.api.class">SinaweiboOAuth</parameter>
+        <parameter key="giko_sinaweibo.api.class">Giko\SinaweiboBundle\Services\SinaweiboOAuth</parameter>
         <parameter key="giko_sinaweibo.service.class">Giko\SinaweiboBundle\Services\Sinaweibo</parameter>
     </parameters>
 

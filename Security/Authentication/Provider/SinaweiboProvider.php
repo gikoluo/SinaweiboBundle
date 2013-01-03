@@ -54,29 +54,30 @@ class SinaweiboProvider implements AuthenticationProviderInterface
         if (!$this->supports($token)) {
             return null;
         }
-
         $user = $token->getUser();
+        
         if ($user instanceof UserInterface) {
             // FIXME: Should we make a call to Sinaweibo for verification?
             $newToken = new SinaweiboUserToken($user, null, $user->getRoles());
             $newToken->setAttributes($token->getAttributes());
-
+            
             return $newToken;
         }
-
+        
+        $this->sinaweibo->setToken($token->getOauthVerifier());
+        
         try {
-            if ($accessToken = $this->sinaweibo->getAccessToken($token->getUser(), $token->getOauthVerifier())) {
-                $newToken = $this->createAuthenticatedToken($accessToken);
+            if ($userInfo = $this->sinaweibo->getClient()->show_user_by_id($user)) { //TODO Maybe fail
+                $newToken = $this->createAuthenticatedToken($userInfo);
                 $newToken->setAttributes($token->getAttributes());
-
                 return $newToken;
             }
+            
         } catch (AuthenticationException $failed) {
             throw $failed;
         } catch (\Exception $failed) {
             throw new AuthenticationException($failed->getMessage(), null, $failed->getCode(), $failed);
         }
-
         throw new AuthenticationException('The Sinaweibo user could not be retrieved from the session.');
     }
 
@@ -90,18 +91,17 @@ class SinaweiboProvider implements AuthenticationProviderInterface
         if (null === $this->userProvider) {
             return new SinaweiboUserToken($accessToken['screen_name'], null, array('ROLE_TWITTER_USER'));
         }
-
+        
         try {
-            $user = $this->userProvider->loadUserByUsername($accessToken['screen_name']);
+            $user = $this->userProvider->loadUserByUsername($accessToken['id']);
             $this->userChecker->checkPostAuth($user);
         } catch (UsernameNotFoundException $ex) {
             if (!$this->createUserIfNotExists) {
                 throw $ex;
             }
-
             $user = $this->userProvider->createUserFromAccessToken($accessToken);
         }
-
+        
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException('User provider did not return an implementation of user interface.');
         }

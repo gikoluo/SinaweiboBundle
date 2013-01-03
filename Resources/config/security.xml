@@ -8,7 +8,6 @@
         <service id="giko_sinaweibo.auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\SinaweiboProvider" public="false">
             <argument type="service" id="giko_sinaweibo.service"/>
         </service>
-        
         <service id="giko_sinaweibo.anywhere_auth" class="Giko\SinaweiboBundle\Security\Authentication\Provider\SinaweiboAnywhereProvider" public="false">
             <argument>%giko_sinaweibo.consumer_secret%</argument>
         </service>
@@ -17,6 +16,9 @@
                  class="Giko\SinaweiboBundle\Security\Firewall\SinaweiboListener"
                  parent="security.authentication.listener.abstract"
                  abstract="true">
+                 <call method="setService">
+		             <argument type="service" id="giko_sinaweibo.service" />
+		        </call>
         </service>
 
         <service id="giko_sinaweibo.security.authentication.entry_point" class="Giko\SinaweiboBundle\Security\EntryPoint\SinaweiboAuthenticationEntryPoint" public="false" abstract="true">

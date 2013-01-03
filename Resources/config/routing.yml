@@ -1,0 +1,16 @@
+connect_sinaweibo:
+    pattern: /sinaweibo/login
+    defaults: { _controller: GikoSinaweiboBundle:Login:sina }
+
+logincheck_sinaweibo:
+    pattern: /sinaweibo/login_check
+    defaults: { _controller: GikoSinaweiboBundle:Login:logincheckSinaweibo }
+    
+callback_sinaweibo:
+    pattern: /sinaweibo/callback
+    defaults: { _controller: GikoSinaweiboBundle:Login:callbackSinaweibo }
+
+update_sinaweibo:
+    pattern: /sinaweibo/update
+    defaults: { _controller: GikoSinaweiboBundle:Statuses:update }
+    

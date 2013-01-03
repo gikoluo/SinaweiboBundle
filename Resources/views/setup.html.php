@@ -1,1 +1,1 @@
-<script src="http://platform.twitter.com/anywhere.js?id=<?php echo $apiKey ?>&v=<?php echo $version ?>" type="text/javascript"></script>
+<script src=" http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=<?php echo $apiKey ?>" type="text/javascript" charset="utf-8"></script>

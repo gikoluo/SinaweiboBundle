@@ -43,6 +43,7 @@ class GikoSinaweiboExtension extends Extension
                 $container->setParameter('giko_sinaweibo.'.$attribute, $config[$attribute]);
             }
         }
+        require_once $config['file'];
 
         if (!empty($config['callback_route'])) {
             $container

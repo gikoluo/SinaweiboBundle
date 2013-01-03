@@ -25,12 +25,12 @@ Installation
 
 >**Note:** The kertz/twitteroauth is patched to be compatible with FOSTwitterBundle
 
-  2. Register the namespace `FOS` to your project's autoloader bootstrap script:
+  2. Register the namespace `Giko` to your project's autoloader bootstrap script:
 
           //app/autoload.php
           $loader->registerNamespaces(array(
                 // ...
-                'FOS'    => __DIR__.'/../vendor/bundles',
+                'Giko'    => __DIR__.'/../vendor/bundles',
                 // ...
           ));
 
@@ -41,35 +41,35 @@ Installation
           {
               return array(
                   // ...
-                  new FOS\TwitterBundle\FOSTwitterBundle(),
+                  new Giko\SinaweiboBundle\GikoSinaweiboBundle(),
                   // ...
               );
           }
 
-  4. Configure the `twitter` service in your YAML configuration:
+  4. Configure the `sinaweibo` service in your YAML configuration:
 
             #app/config/config.yml
-            fos_twitter:
-                file: %kernel.root_dir%/../vendor/twitteroauth/twitteroauth/twitteroauth.php
+            giko_sinaweibo:
+                file: %kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php
                 consumer_key: xxxxxx
                 consumer_secret: xxxxxx
-                callback_url: http://www.example.com/login_check
+                callback_url: http://localhost:8000/login_check
 
   5. Add the following configuration to use the security component:
 
             #app/config/security.yml
             security:
                 providers:
-                    fos_twitter:
-                        id: fos_twitter.auth
+                    giko_sinaweibo:
+                        id: giko_sinaweibo.auth
                 firewalls:
                     secured:
                         pattern:   /secured/.*
-                        fos_twitter: true
+                        giko_sinaweibo: true
                     public:
                         pattern:   /.*
                         anonymous: true
-                        fos_twitter: true
+                        giko_sinaweibo: true
                         logout: true
                 access_control:
                     - { path: /.*, role: [IS_AUTHENTICATED_ANONYMOUSLY] }
@@ -130,7 +130,7 @@ services:
         my.twitter.user:
             class: Acme\YourBundle\Security\User\Provider\TwitterProvider
             arguments:
-                twitter_oauth: "@fos_twitter.api"
+                twitter_oauth: "@giko_sinaweibo.api"
                 userManager: "@fos_user.user_manager"
                 validator: "@validator"
                 session: "@session" 
@@ -139,64 +139,97 @@ services:
 Also you would need some new properties and methods in your User model class.
 
 ``` php
-
 <?php
 // src/Acme/YourBundle/Entity/User.php
+    
+    /**
+     * @var string $sinaweiboId
+     * 
+     * @ORM\Column(name="sinaweibo_id", type="string", length=80, nullable=true)
+     */
+    private $sinaweiboId;
+    
+    /**
+     * @var string $sinaweiboUsername
+     * 
+     * @ORM\Column(name="sinaweibo_username", type="string", length=100, nullable=true)
+     */
+    private $sinaweiboUsername;
+    
+    /**
+     * Get id
+     *
+     * @return integer $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
 
-        /** 
-         * @var string
-         */
-        protected $twitterID;
+    /**
+     * Set sinaweiboId
+     *
+     * @param string $sinaweiboId
+     * @return User
+     */
+    public function setSinaweiboId($sinaweiboId)
+    {
+        $this->sinaweiboId = $sinaweiboId;
+        $this->setUsername($sinaweiboId);
+        return $this;
+    }
 
-        /** 
-         * @var string
-         */
-        protected $twitter_username;
+    /**
+     * Get sinaweiboId
+     *
+     * @return string 
+     */
+    public function getSinaweiboId()
+    {
+        return $this->sinaweiboId;
+    }
 
+    /**
+     * Set sinaweiboUsername
+     *
+     * @param string $sinaweiboUsername
+     * @return User
+     */
+    public function setSinaweiboUsername($sinaweiboUsername)
+    {
+        $this->sinaweiboUsername = $sinaweiboUsername;
+    
+        return $this;
+    }
 
-        /**
-         * Set twitterID
-         *
-         * @param string $twitterID
-         */
-        public function setTwitterID($twitterID)
-        {
-            $this->twitterID = $twitterID;
-            $this->setUsername($twitterID);
-            $this->salt = '';
-        }
-
-        /**
-         * Get twitterID
-         *
-         * @return string 
-         */
-        public function getTwitterID()
-        {
-            return $this->twitterID;
-        }
-
-        /**
-         * Set twitter_username
-         *
-         * @param string $twitterUsername
-         */
-        public function setTwitterUsername($twitterUsername)
-        {
-            $this->twitter_username = $twitterUsername;
-        }
-
-        /**
-         * Get twitter_username
-         *
-         * @return string 
-         */
-        public function getTwitterUsername()
-        {
-            return $this->twitter_username;
-        }
-```
+    /**
+     * Get sinaweiboUsername
+     *
+     * @return string 
+     */
+    public function getSinaweiboUsername()
+    {
+        return $this->sinaweiboUsername;
+    }
         
+```
+
+Add this field to the doctrine xml:
+
+``` xml
+//Acme/YourBundle/Resources/config/doctrine/User.orm.xml
+<entity name="Acme\YourBundle\Entity\User" table="fos_user_user">
+  <id name="id" column="id" type="integer">
+    <generator strategy="AUTO" />
+  </id>
+  <field name="sinaweiboId"    type="string"   column="sinaweibo_id" length="255"    nullable="true" />
+  <field name="sinaweiboUsername"    type="string"   column="sinaweibo_username" length="255"    nullable="true" />
+</entity>
+```
+>**Note:** You are forced to use the XML definition by fos and sonata user bundles. Anotations is not effective.
+
+
 And this is the TwitterProvider class
 
 ``` php
@@ -310,7 +343,7 @@ Finally, to get the authentication tokens from Twitter you would need to create 
         {   
 
           $request = $this->get('request');
-          $twitter = $this->get('fos_twitter.service');
+          $twitter = $this->get('giko_sinaweibo.service');
 
           $authURL = $twitter->getLoginUrl($request);
 
@@ -334,7 +367,7 @@ You can create a button in your Twig template that will send the user to authent
 ``` yaml
 # app/config/config.yml
 
-        fos_twitter:
+        giko_sinaweibo:
             ...
             callback_url: http://www.yoursite.com/twitter/login_check
 ```
@@ -355,7 +388,7 @@ Remember to edit your security.yml to use this provider
 
             providers:
 
-                my_fos_twitter_provider:
+                my_giko_sinaweibo_provider:
                     id: my.twitter.user 
 
             firewalls:
@@ -365,11 +398,11 @@ Remember to edit your security.yml to use this provider
 
                 public:
                     pattern:  /
-                    fos_twitter:
+                    giko_sinaweibo:
                         login_path: /twitter/login
                         check_path: /twitter/login_check
                         default_target_path: /
-                        provider: my_fos_twitter_provider
+                        provider: my_giko_sinaweibo_provider
 
                     anonymous: ~
 

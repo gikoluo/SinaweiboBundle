@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
                 })
             ->end()
             ->children()
-                ->scalarNode('file')->defaultValue('%kernel.root_dir%/../vendor/sinaweibooauth/sinaweibooauth/sinaweibooauth.php')->end()
+                ->scalarNode('file')->defaultValue('%kernel.root_dir%/../vendor/sinalib/saetv2.ex.class.php')->end()
                 ->scalarNode('consumer_key')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('consumer_secret')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('access_token')->defaultNull()->end()
