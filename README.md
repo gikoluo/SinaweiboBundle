@@ -12,12 +12,6 @@
 
 ### Step 1. 将本组件 ```giko/sinaweibo-bundle``` 和 ```friendsofsymfony/user-bundle```  添加到 ``composer.json`` 文件:
 ```
-        "repositories": [
-            {
-                "type": "vcs",
-                "url":  "https://github.com/gikoluo/SinaweiboBundle.git"
-            }
-        ],
         "require": {
             #...
             "friendsofsymfony/user-bundle": "dev-master",

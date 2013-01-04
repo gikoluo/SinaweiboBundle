@@ -56,7 +56,7 @@ class SinaweiboProvider implements UserProviderInterface
                 $user = $this->userManager->createUser();
                 $user->setEnabled(true);
                 $user->setPassword('');
-                //$user->setAlgorithm('');
+                $user->setUsername($username);
             }
             $username = $info['screen_name'];
             $user->setSinaweiboId($info['id']);
