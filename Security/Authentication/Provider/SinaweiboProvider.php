@@ -56,29 +56,22 @@ class SinaweiboProvider implements AuthenticationProviderInterface
         }
         $user = $token->getUser();
         
+        
         if ($user instanceof UserInterface) {
-            // FIXME: Should we make a call to Sinaweibo for verification?
             $newToken = new SinaweiboUserToken($user, null, $user->getRoles());
             $newToken->setAttributes($token->getAttributes());
-            
             return $newToken;
         }
         
-        $this->sinaweibo->setToken($token->getOauthVerifier());
-        
-        try {
-            if ($userInfo = $this->sinaweibo->getClient()->show_user_by_id($user)) { //TODO Maybe fail
-                $newToken = $this->createAuthenticatedToken($userInfo);
-                $newToken->setAttributes($token->getAttributes());
-                return $newToken;
-            }
-            
-        } catch (AuthenticationException $failed) {
-            throw $failed;
-        } catch (\Exception $failed) {
-            throw new AuthenticationException($failed->getMessage(), null, $failed->getCode(), $failed);
+        $accessToken = $token->getOauthVerifier();
+        $this->sinaweibo->setToken($accessToken);
+        $userInfo = $this->sinaweibo->getClient()->show_user_by_id($user);
+        if (!empty($userInfo['error'])) {
+            throw new \Exception("Sinaweibo API: " . $userInfo['error']);
         }
-        throw new AuthenticationException('The Sinaweibo user could not be retrieved from the session.');
+        $newToken = $this->createAuthenticatedToken($userInfo);
+        $newToken->setAttributes($token->getAttributes());
+        return $newToken;
     }
 
     public function supports(TokenInterface $token)

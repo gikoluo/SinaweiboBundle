@@ -44,7 +44,8 @@ class SinaweiboProvider implements UserProviderInterface
     public function loadUserByUsername($userid)
     {
         $user = $this->findUserBySinaweiboId($userid);
-        $this->sinaweibo_oauth->setOAuthToken( $this->session->get('access_token') , $this->session->get('access_token_secret'));
+        $accessToken = $this->session->get('access_token');
+        $this->sinaweibo_oauth->setOAuthToken( $accessToken , $this->session->get('access_token_secret'));
         
         try {
              $info = $this->sinaweibo_oauth->show_user_by_id($userid);
@@ -52,15 +53,16 @@ class SinaweiboProvider implements UserProviderInterface
              $info = null;
         }
         if (!empty($info)) {
+            $username = $info['screen_name'];
+            
             if (empty($user)) {
                 $user = $this->userManager->createUser();
                 $user->setEnabled(true);
                 $user->setPassword('');
-                $user->setUsername($username);
             }
-            $username = $info['screen_name'];
             $user->setSinaweiboId($info['id']);
             $user->setSinaweiboUsername($username);
+            $user->setSinaweiboAccessToken($accessToken);
             $user->setEmail('');
             $rs = $this->userManager->updateUser($user);
         }
