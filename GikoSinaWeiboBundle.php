@@ -15,7 +15,7 @@ use Giko\SinaweiboBundle\DependencyInjection\Security\Factory\SinaweiboFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class GikoSinaWeiboBundle extends Bundle
+class GikoSinaweiboBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
